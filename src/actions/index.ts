@@ -1,4 +1,5 @@
-import { signIn, signOut } from "next-auth/react";
+"use server";
+import { signIn, signOut } from "@/auth";
 
 export const signin = async () => {
   return signIn("github");

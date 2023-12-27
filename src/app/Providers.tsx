@@ -1,5 +1,6 @@
 "use client";
 import { NextUIProvider } from "@nextui-org/react";
+import { SessionProvider } from "next-auth/react";
 import React from "react";
 
 export interface HasChildren {
@@ -7,5 +8,7 @@ export interface HasChildren {
 }
 
 export const Providers: React.FC<HasChildren> = ({ children }) => (
-  <NextUIProvider>{children}</NextUIProvider>
+  <SessionProvider>
+    <NextUIProvider>{children}</NextUIProvider>
+  </SessionProvider>
 );
