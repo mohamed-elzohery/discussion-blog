@@ -1,6 +1,19 @@
 "use server";
 
+import { auth } from "@/auth";
+import { db } from "@/db";
+import paths from "@/paths";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
+
+interface CreateTopicFormState {
+  errors: {
+    name?: string[];
+    description?: string[];
+    _form?: string[];
+  };
+}
 
 const createTopicSchema = z.object({
   name: z
@@ -12,15 +25,43 @@ const createTopicSchema = z.object({
   description: z.string().min(10),
 });
 
-export const createTopic = async (formData: FormData) => {
+export const createTopic = async (
+  formState: CreateTopicFormState,
+  formData: FormData
+): Promise<CreateTopicFormState> => {
+  const session = await auth();
+
+  if (!session?.user) return { errors: { _form: ["you must be sign in"] } };
+
   const result = createTopicSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
   });
 
   if (!result.success) {
-    console.log(result.error.flatten().fieldErrors);
+    return {
+      errors: {
+        name: result.error.flatten().fieldErrors.name,
+        description: result.error.flatten().fieldErrors.description,
+      },
+    };
+  }
+
+  let topicID;
+  try {
+    const topic = await db.topic.create({
+      data: {
+        slug: result.data.name,
+        description: result.data.description,
+      },
+    });
+    topicID = topic.id;
+  } catch (error: unknown) {
+    if (error instanceof Error) return { errors: { _form: [error.message] } };
+    else return { errors: { _form: ["Something went wrong"] } };
   }
 
   // revalidate homepage
+  revalidatePath("/");
+  redirect(paths.topicShow(topicID));
 };
