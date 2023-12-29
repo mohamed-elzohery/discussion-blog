@@ -3,6 +3,7 @@ import { createTopic } from "@/actions";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import React from "react";
 import { useFormState } from "react-dom";
+import SubmitButton from "../Buttons/SubmitButton";
 
 function CreateTopicForm() {
   const [state, action] = useFormState(createTopic, { errors: {} });
@@ -31,7 +32,7 @@ function CreateTopicForm() {
             {state.errors._form.join(", ")}
           </p>
         ) : null}
-        <Button type="submit">Add Topic</Button>
+        <SubmitButton>Add Topic</SubmitButton>
       </div>
     </form>
   );
