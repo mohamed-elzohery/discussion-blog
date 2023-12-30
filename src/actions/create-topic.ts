@@ -47,7 +47,7 @@ export const createTopic = async (
     };
   }
 
-  let topicID;
+  let topicSlug;
   try {
     const topic = await db.topic.create({
       data: {
@@ -55,7 +55,7 @@ export const createTopic = async (
         description: result.data.description,
       },
     });
-    topicID = topic.id;
+    topicSlug = topic.slug;
   } catch (error: unknown) {
     if (error instanceof Error) return { errors: { _form: [error.message] } };
     else return { errors: { _form: ["Something went wrong"] } };
@@ -65,5 +65,5 @@ export const createTopic = async (
 
   // revalidate homepage
   revalidatePath("/");
-  redirect(paths.topicShow(topicID));
+  redirect(paths.topicShow(topicSlug));
 };

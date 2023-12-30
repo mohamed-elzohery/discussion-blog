@@ -1,7 +1,28 @@
-import React from "react";
+import Link from "next/link";
+import paths from "@/paths";
+import PostShow from "@/app/components/posts/post-show";
+import CommentCreateForm from "@/app/components/comments/comment-create-form";
+import CommentList from "@/app/components/comments/comment-list";
+import { fetchCommentsByPostID } from "@/db/queries/comments";
 
-function PostPage() {
-  return <div>PostPage</div>;
+interface PostShowPageProps {
+  params: {
+    slug: string;
+    id: string;
+  };
 }
 
-export default PostPage;
+export default async function PostShowPage({ params }: PostShowPageProps) {
+  const { slug, id } = params;
+
+  return (
+    <div className="space-y-3">
+      <Link className="underline decoration-solid" href={paths.topicShow(slug)}>
+        {"< "}Back to {slug}
+      </Link>
+      <PostShow postId={id} />
+      <CommentCreateForm postId={id} startOpen />
+      <CommentList fetchComments={() => fetchCommentsByPostID(id)} />
+    </div>
+  );
+}
