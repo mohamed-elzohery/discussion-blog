@@ -61,8 +61,6 @@ export const createTopic = async (
     else return { errors: { _form: ["Something went wrong"] } };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
   // revalidate homepage
   revalidatePath("/");
   redirect(paths.topicShow(topicSlug));

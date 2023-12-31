@@ -61,7 +61,6 @@ export const createPost = async (
     else return { errors: { _form: ["Something went wrong"] } };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
   revalidatePath(paths.topicShow(slug));
   redirect(paths.postShow(slug, postId));
 };
